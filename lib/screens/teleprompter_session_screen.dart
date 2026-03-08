@@ -63,6 +63,7 @@ class _TeleprompterSessionScreenState extends State<TeleprompterSessionScreen>
   }
 
   void _advanceVerse() async {
+    HapticService.tap();
     await _fadeController.forward();
 
     setState(() {
@@ -70,7 +71,6 @@ class _TeleprompterSessionScreenState extends State<TeleprompterSessionScreen>
         _currentVerse++;
       } else {
         _count++;
-        HapticService.tap();
         if (_count >= widget.targetCount) {
           _completeSession();
           return;
