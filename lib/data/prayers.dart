@@ -65,7 +65,6 @@ Namu jayavalagi re mokshapantha
 Namaskar majha tya Hanumanta''';
 
 const _marutiOriginalVerses = [
-  '॥ मारुती नमस्कार ॥',
   'महारुद्र अवतार हा सूर्यवंशी ।\nअनादिनाथ पूर्ण तारकासी ।\nअसा चैत्र पौर्णिमेचा जन्म झाला ।\nनमस्कार माझा त्या मारुतीला ॥',
   'तनु शिवशक्ति असे पूर्ण ज्याचो ।\nकिती भाग्य वर्ण त्या अंजनीचें ।\nत्याच्या भक्तिलागी असा जन्म झाला ।\nनमस्कार माझा त्या मारुतीला ॥',
   'मिलायासी जातां त्या भारकरासी तिथें ।\nराहु तो येऊनी त्याजपाशी ।\nत्याचा चंडकोप मारितां तो पळाला ।\nनमस्कार माझा त्या मारुतीला ॥',
@@ -75,7 +74,6 @@ const _marutiOriginalVerses = [
 ];
 
 const _marutiEnglishVerses = [
-  '|| Maruti Namaskar ||',
   'Maharudra avatar ha suryavamshi\nAnadinath purna tarakasi\nAsa Chaitra paurnimecha janma jhala\nNamaskar majha tya Marutila',
   'Tanu Shivashakti ase purna jyacho\nKiti bhagya varna tya Anjaniche\nTyachya bhaktilagi asa janma jhala\nNamaskar majha tya Marutila',
   'Milayasi jata tya bharkarasi tithe\nRahu to yeuni tyajapashi\nTyacha chandrakop marita to palala\nNamaskar majha tya Marutila',

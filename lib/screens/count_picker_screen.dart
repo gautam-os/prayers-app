@@ -264,8 +264,5 @@ class _CountPickerScreenState extends State<CountPickerScreen> {
       );
     }
 
-    if (mounted) {
-      Navigator.pop(context);
-    }
   }
 }

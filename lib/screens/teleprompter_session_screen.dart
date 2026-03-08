@@ -121,6 +121,8 @@ class _TeleprompterSessionScreenState extends State<TeleprompterSessionScreen>
     final minutes = elapsed.inMinutes.toString().padLeft(2, '0');
     final seconds = (elapsed.inSeconds % 60).toString().padLeft(2, '0');
     final verses = _verses;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final verseFontSize = screenHeight * 0.028;
 
     return Scaffold(
       body: GestureDetector(
@@ -154,9 +156,9 @@ class _TeleprompterSessionScreenState extends State<TeleprompterSessionScreen>
                 const SizedBox(height: 16),
                 Text(
                   widget.prayer.title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white,
-                    fontSize: 22,
+                    fontSize: screenHeight * 0.032,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -164,14 +166,14 @@ class _TeleprompterSessionScreenState extends State<TeleprompterSessionScreen>
                 FadeTransition(
                   opacity: _fadeAnimation,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Text(
                       _currentVerse < verses.length
                           ? verses[_currentVerse]
                           : '',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
-                        fontSize: 24,
+                        fontSize: verseFontSize.clamp(18.0, 28.0),
                         height: 1.8,
                         fontWeight: FontWeight.w500,
                       ),
@@ -184,7 +186,7 @@ class _TeleprompterSessionScreenState extends State<TeleprompterSessionScreen>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Line ${_currentVerse + 1} of ${verses.length}',
+                      'Verse ${_currentVerse + 1} of ${verses.length}',
                       style: TextStyle(
                         color: Colors.white.withAlpha(180),
                         fontSize: 14,
@@ -214,7 +216,7 @@ class _TeleprompterSessionScreenState extends State<TeleprompterSessionScreen>
                   'Tap or swipe to advance',
                   style: TextStyle(
                     color: Colors.white.withAlpha(150),
-                    fontSize: 14,
+                    fontSize: 13,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -222,10 +224,10 @@ class _TeleprompterSessionScreenState extends State<TeleprompterSessionScreen>
                   'Long-press to finish',
                   style: TextStyle(
                     color: Colors.white.withAlpha(150),
-                    fontSize: 14,
+                    fontSize: 13,
                   ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 24),
               ],
             ),
           ),

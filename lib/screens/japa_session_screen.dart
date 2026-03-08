@@ -86,6 +86,8 @@ class _JapaSessionScreenState extends State<JapaSessionScreen> {
     final elapsed = _stopwatch.elapsed;
     final minutes = elapsed.inMinutes.toString().padLeft(2, '0');
     final seconds = (elapsed.inSeconds % 60).toString().padLeft(2, '0');
+    final screenHeight = MediaQuery.of(context).size.height;
+    final prayerFontSize = (screenHeight * 0.03).clamp(20.0, 30.0);
 
     return Scaffold(
       body: GestureDetector(
@@ -110,20 +112,20 @@ class _JapaSessionScreenState extends State<JapaSessionScreen> {
                 const Spacer(),
                 Text(
                   widget.prayer.title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white,
-                    fontSize: 22,
+                    fontSize: screenHeight * 0.035,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 24),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Text(
                     text,
                     style: TextStyle(
                       color: Colors.white.withAlpha(230),
-                      fontSize: 18,
+                      fontSize: prayerFontSize,
                       height: 1.8,
                     ),
                     textAlign: TextAlign.center,
@@ -132,9 +134,9 @@ class _JapaSessionScreenState extends State<JapaSessionScreen> {
                 const Spacer(),
                 Text(
                   '$_count / ${widget.targetCount}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white,
-                    fontSize: 48,
+                    fontSize: screenHeight * 0.06,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -151,7 +153,7 @@ class _JapaSessionScreenState extends State<JapaSessionScreen> {
                   'Tap anywhere to count',
                   style: TextStyle(
                     color: Colors.white.withAlpha(150),
-                    fontSize: 14,
+                    fontSize: 13,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -159,10 +161,10 @@ class _JapaSessionScreenState extends State<JapaSessionScreen> {
                   'Long-press to finish',
                   style: TextStyle(
                     color: Colors.white.withAlpha(150),
-                    fontSize: 14,
+                    fontSize: 13,
                   ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 24),
               ],
             ),
           ),
