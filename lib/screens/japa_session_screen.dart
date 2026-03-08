@@ -24,11 +24,14 @@ class JapaSessionScreen extends StatefulWidget {
   State<JapaSessionScreen> createState() => _JapaSessionScreenState();
 }
 
-class _JapaSessionScreenState extends State<JapaSessionScreen> {
+class _JapaSessionScreenState extends State<JapaSessionScreen>
+    with SingleTickerProviderStateMixin {
   int _count = 0;
   late bool _showEnglish;
   late Stopwatch _stopwatch;
   late Timer _timer;
+  late AnimationController _countFadeController;
+  late Animation<double> _countFadeAnimation;
 
   @override
   void initState() {
@@ -39,22 +42,34 @@ class _JapaSessionScreenState extends State<JapaSessionScreen> {
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (mounted) setState(() {});
     });
+    _countFadeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _countFadeAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
+      CurvedAnimation(parent: _countFadeController, curve: Curves.easeInOut),
+    );
   }
 
   @override
   void dispose() {
     _timer.cancel();
     _stopwatch.stop();
+    _countFadeController.dispose();
     WakelockPlus.disable();
     super.dispose();
   }
 
-  void _increment() {
+  Future<void> _increment() async {
     HapticService.tap();
+    await _countFadeController.forward();
+    if (!mounted) return;
     setState(() => _count++);
     if (_count >= widget.targetCount) {
       _completeSession();
+      return;
     }
+    _countFadeController.reverse();
   }
 
   void _completeSession() async {
@@ -175,12 +190,15 @@ class _JapaSessionScreenState extends State<JapaSessionScreen> {
                 const Spacer(),
                 Semantics(
                   label: 'Count $_count of ${widget.targetCount}',
-                  child: Text(
-                    '$_count / ${widget.targetCount}',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: screenHeight * 0.06,
-                      fontWeight: FontWeight.bold,
+                  child: FadeTransition(
+                    opacity: _countFadeAnimation,
+                    child: Text(
+                      '$_count / ${widget.targetCount}',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: screenHeight * 0.06,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),

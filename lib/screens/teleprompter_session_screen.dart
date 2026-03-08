@@ -152,7 +152,7 @@ class _TeleprompterSessionScreenState extends State<TeleprompterSessionScreen>
     final seconds = (elapsed.inSeconds % 60).toString().padLeft(2, '0');
     final verses = _verses;
     final screenHeight = MediaQuery.of(context).size.height;
-    final verseFontSize = screenHeight * 0.028;
+    final verseFontSize = screenHeight * 0.034;
 
     return Scaffold(
       backgroundColor: AppColors.deepOrange,
@@ -214,7 +214,7 @@ class _TeleprompterSessionScreenState extends State<TeleprompterSessionScreen>
                             : '',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: verseFontSize.clamp(18.0, 28.0),
+                          fontSize: verseFontSize.clamp(20.0, 34.0),
                           height: 1.8,
                           fontWeight: FontWeight.w500,
                         ),
