@@ -35,8 +35,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHome() {
-    final totalJapa = StorageService.totalCount();
-    final totalMin = StorageService.totalMinutes();
     final streak = StorageService.currentStreak();
 
     return SafeArea(
@@ -50,9 +48,33 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Text('Prayers',
                     style: Theme.of(context).textTheme.headlineLarge),
-                Text(
-                  _todayFormatted(),
-                  style: Theme.of(context).textTheme.bodyMedium,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      _todayFormatted(),
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    if (streak > 0) ...[
+                      const SizedBox(height: 2),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.local_fire_department_rounded,
+                              size: 14, color: AppColors.saffron),
+                          const SizedBox(width: 3),
+                          Text(
+                            '$streak day${streak == 1 ? '' : 's'}',
+                            style: TextStyle(
+                              color: AppColors.saffron,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
                 ),
               ],
             ),
@@ -61,8 +83,6 @@ class _HomeScreenState extends State<HomeScreen> {
               child: ListView(
                 children: [
                   ...allPrayers.map((p) => _prayerCard(p)),
-                  const SizedBox(height: 24),
-                  _statsSection(totalJapa, totalMin, streak),
                 ],
               ),
             ),
@@ -129,50 +149,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _statsSection(int totalJapa, int totalMin, int streak) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: AppColors.gradient,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('My Practice',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600)),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _statItem(_formatNumber(totalJapa), 'Total Prayers'),
-              _statItem('${totalMin}m', 'Time'),
-              _statItem('$streak', streak == 1 ? 'Day Streak' : 'Days Streak'),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _statItem(String value, String label) {
-    return Column(
-      children: [
-        Text(value,
-            style: const TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                fontWeight: FontWeight.bold)),
-        const SizedBox(height: 4),
-        Text(label,
-            style: TextStyle(color: Colors.white.withAlpha(200), fontSize: 12)),
-      ],
     );
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../data/prayers.dart';
 import '../models/japa_session.dart';
+import '../models/prayer.dart';
 import '../services/storage_service.dart';
 import '../theme.dart';
 
@@ -48,17 +49,110 @@ class HistoryScreen extends StatelessWidget {
             Text('History', style: Theme.of(context).textTheme.headlineLarge),
             const SizedBox(height: 16),
             Expanded(
-              child: ListView.builder(
-                itemCount: grouped.length,
-                itemBuilder: (context, index) {
-                  final entry = grouped[index];
-                  return _dateGroup(context, entry.label, entry.sessions);
-                },
+              child: ListView(
+                children: [
+                  _prayerStatsSection(context),
+                  const SizedBox(height: 20),
+                  ...grouped.map((entry) =>
+                      _dateGroup(context, entry.label, entry.sessions)),
+                ],
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _prayerStatsSection(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: AppColors.gradient,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: allPrayers.map((prayer) {
+          final count = StorageService.totalCountForPrayer(prayer.id);
+          final minutes = StorageService.totalMinutesForPrayer(prayer.id);
+          final lastPracticed = StorageService.lastPracticedForPrayer(prayer.id);
+
+          return _prayerStatRow(context, prayer, count, minutes, lastPracticed);
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _prayerStatRow(BuildContext context, Prayer prayer, int count,
+      int minutes, DateTime? lastPracticed) {
+    String lastStr = 'Never';
+    if (lastPracticed != null) {
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final practiceDay = DateTime(
+          lastPracticed.year, lastPracticed.month, lastPracticed.day);
+      final diff = today.difference(practiceDay).inDays;
+      if (diff == 0) {
+        lastStr = 'Today';
+      } else if (diff == 1) {
+        lastStr = 'Yesterday';
+      } else {
+        lastStr = '${diff}d ago';
+      }
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 3,
+            child: Text(
+              prayer.title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          Expanded(
+            flex: 4,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _miniStat(_formatNumber(count), 'count'),
+                _miniStat('${minutes}m', 'time'),
+                _miniStat(lastStr, 'last'),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _miniStat(String value, String label) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          label,
+          style: TextStyle(
+            color: Colors.white.withAlpha(160),
+            fontSize: 10,
+          ),
+        ),
+      ],
     );
   }
 
@@ -113,7 +207,7 @@ class HistoryScreen extends StatelessWidget {
             ),
           ),
           Text(
-            '×${session.count}',
+            '\u00d7${session.count}',
             style: const TextStyle(
               color: AppColors.deepOrange,
               fontSize: 16,
@@ -128,6 +222,13 @@ class HistoryScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _formatNumber(int n) {
+    if (n >= 1000) {
+      return '${(n / 1000).toStringAsFixed(n % 1000 == 0 ? 0 : 1)}k';
+    }
+    return n.toString();
   }
 
   List<_DateGroup> _groupByDate(List<JapaSession> sessions) {
