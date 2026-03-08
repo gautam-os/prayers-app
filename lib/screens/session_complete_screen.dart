@@ -3,6 +3,7 @@ import '../models/prayer.dart';
 import '../models/japa_session.dart';
 import '../services/storage_service.dart';
 import '../theme.dart';
+import 'count_picker_screen.dart';
 
 class SessionCompleteScreen extends StatelessWidget {
   final Prayer prayer;
@@ -69,6 +70,35 @@ class SessionCompleteScreen extends StatelessWidget {
                   _divider(),
                   _infoRow('Lifetime total', _formatNumber(lifetime)),
                   const SizedBox(height: 48),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => CountPickerScreen(prayer: prayer),
+                          ),
+                        );
+                      },
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        side: BorderSide(color: Colors.white.withAlpha(170)),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      child: const Text(
+                        'Practice Again',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(

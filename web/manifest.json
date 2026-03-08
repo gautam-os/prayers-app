@@ -1,11 +1,11 @@
 {
-    "name": "prayers_app",
-    "short_name": "prayers_app",
+    "name": "Prayers",
+    "short_name": "Prayers",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#FFF8F0",
+    "theme_color": "#E8751A",
+    "description": "A personal prayer counter for Maha Mantra, Gayatri Mantra, and Maruti Namaskar.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

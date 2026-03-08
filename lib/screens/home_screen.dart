@@ -60,12 +60,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.local_fire_department_rounded,
-                              size: 14, color: AppColors.saffron),
-                          const SizedBox(width: 3),
+                          const Icon(
+                            Icons.local_fire_department_rounded,
+                            size: 14,
+                            color: AppColors.saffron,
+                          ),
+                          const SizedBox(width: 4),
                           Text(
                             '$streak day${streak == 1 ? '' : 's'}',
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: AppColors.saffron,
                               fontSize: 12,
                               fontWeight: FontWeight.w600,

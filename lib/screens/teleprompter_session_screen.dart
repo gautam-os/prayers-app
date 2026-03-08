@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import '../models/prayer.dart';
 import '../models/japa_session.dart';
 import '../services/haptic_service.dart';
@@ -42,6 +43,7 @@ class _TeleprompterSessionScreenState extends State<TeleprompterSessionScreen>
     super.initState();
     _showEnglish = widget.showEnglish;
     _stopwatch = Stopwatch()..start();
+    WakelockPlus.enable();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (mounted) setState(() {});
     });
@@ -59,6 +61,7 @@ class _TeleprompterSessionScreenState extends State<TeleprompterSessionScreen>
     _timer.cancel();
     _stopwatch.stop();
     _fadeController.dispose();
+    WakelockPlus.disable();
     super.dispose();
   }
 
@@ -84,6 +87,7 @@ class _TeleprompterSessionScreenState extends State<TeleprompterSessionScreen>
 
   void _previousVerse() async {
     if (_currentVerse > 0) {
+      HapticService.tap();
       await _fadeController.forward();
       setState(() => _currentVerse--);
       _fadeController.reverse();
@@ -115,6 +119,32 @@ class _TeleprompterSessionScreenState extends State<TeleprompterSessionScreen>
     );
   }
 
+  Future<void> _confirmFinish() async {
+    final shouldFinish = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Finish session?'),
+        content: Text(
+          'You have completed $_count of ${widget.targetCount} rounds.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Keep going'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Finish'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldFinish == true && mounted) {
+      _completeSession();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final elapsed = _stopwatch.elapsed;
@@ -138,7 +168,9 @@ class _TeleprompterSessionScreenState extends State<TeleprompterSessionScreen>
           }
         },
         onLongPress: () {
-          if (_count > 0) _completeSession();
+          if (_count > 0) {
+            _confirmFinish();
+          }
         },
         child: Container(
           width: double.infinity,
@@ -157,12 +189,16 @@ class _TeleprompterSessionScreenState extends State<TeleprompterSessionScreen>
                     ),
                   ),
                 const SizedBox(height: 16),
-                Text(
-                  widget.prayer.title,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: screenHeight * 0.032,
-                    fontWeight: FontWeight.bold,
+                Semantics(
+                  header: true,
+                  label: widget.prayer.title,
+                  child: Text(
+                    widget.prayer.title,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: screenHeight * 0.032,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 const Spacer(),
@@ -170,17 +206,20 @@ class _TeleprompterSessionScreenState extends State<TeleprompterSessionScreen>
                   opacity: _fadeAnimation,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Text(
-                      _currentVerse < verses.length
-                          ? verses[_currentVerse]
-                          : '',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: verseFontSize.clamp(18.0, 28.0),
-                        height: 1.8,
-                        fontWeight: FontWeight.w500,
+                    child: Semantics(
+                      label: 'Verse ${_currentVerse + 1} of ${verses.length}',
+                      child: Text(
+                        _currentVerse < verses.length
+                            ? verses[_currentVerse]
+                            : '',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: verseFontSize.clamp(18.0, 28.0),
+                          height: 1.8,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
@@ -188,20 +227,26 @@ class _TeleprompterSessionScreenState extends State<TeleprompterSessionScreen>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      'Verse ${_currentVerse + 1} of ${verses.length}',
-                      style: TextStyle(
-                        color: Colors.white.withAlpha(180),
-                        fontSize: 14,
+                    Semantics(
+                      label: 'Current verse ${_currentVerse + 1} of ${verses.length}',
+                      child: Text(
+                        'Verse ${_currentVerse + 1} of ${verses.length}',
+                        style: TextStyle(
+                          color: Colors.white.withAlpha(180),
+                          fontSize: 14,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 24),
-                    Text(
-                      '$_count / ${widget.targetCount}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                    Semantics(
+                      label: 'Completed rounds $_count of ${widget.targetCount}',
+                      child: Text(
+                        '$_count / ${widget.targetCount}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],

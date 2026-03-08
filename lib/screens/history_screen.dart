@@ -51,10 +51,10 @@ class HistoryScreen extends StatelessWidget {
             Expanded(
               child: ListView(
                 children: [
-                  _prayerStatsSection(context),
+                  _prayerSummarySection(context),
                   const SizedBox(height: 20),
-                  ...grouped.map((entry) =>
-                      _dateGroup(context, entry.label, entry.sessions)),
+                  ...grouped
+                      .map((entry) => _dateGroup(context, entry.label, entry.sessions)),
                 ],
               ),
             ),
@@ -64,7 +64,7 @@ class HistoryScreen extends StatelessWidget {
     );
   }
 
-  Widget _prayerStatsSection(BuildContext context) {
+  Widget _prayerSummarySection(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -72,68 +72,61 @@ class HistoryScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
-        children: allPrayers.map((prayer) {
-          final count = StorageService.totalCountForPrayer(prayer.id);
-          final minutes = StorageService.totalMinutesForPrayer(prayer.id);
-          final lastPracticed = StorageService.lastPracticedForPrayer(prayer.id);
-
-          return _prayerStatRow(context, prayer, count, minutes, lastPracticed);
-        }).toList(),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Prayer Summary',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 12),
+          ...allPrayers.map((prayer) => _prayerSummaryTile(context, prayer)),
+        ],
       ),
     );
   }
 
-  Widget _prayerStatRow(BuildContext context, Prayer prayer, int count,
-      int minutes, DateTime? lastPracticed) {
-    String lastStr = 'Never';
-    if (lastPracticed != null) {
-      final now = DateTime.now();
-      final today = DateTime(now.year, now.month, now.day);
-      final practiceDay = DateTime(
-          lastPracticed.year, lastPracticed.month, lastPracticed.day);
-      final diff = today.difference(practiceDay).inDays;
-      if (diff == 0) {
-        lastStr = 'Today';
-      } else if (diff == 1) {
-        lastStr = 'Yesterday';
-      } else {
-        lastStr = '${diff}d ago';
-      }
-    }
+  Widget _prayerSummaryTile(BuildContext context, Prayer prayer) {
+    final totalCount = StorageService.totalCountForPrayer(prayer.id);
+    final totalMinutes = StorageService.totalMinutesForPrayer(prayer.id);
+    final lastPracticed = StorageService.lastPracticedForPrayer(prayer.id);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white.withAlpha(24),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            flex: 3,
-            child: Text(
-              prayer.title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-              overflow: TextOverflow.ellipsis,
+          Text(
+            prayer.title,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
             ),
           ),
-          Expanded(
-            flex: 4,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _miniStat(_formatNumber(count), 'count'),
-                _miniStat('${minutes}m', 'time'),
-                _miniStat(lastStr, 'last'),
-              ],
-            ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _summaryStat(_formatNumber(totalCount), 'Count'),
+              _summaryStat('${totalMinutes}m', 'Time'),
+              _summaryStat(_lastPracticedLabel(lastPracticed), 'Last'),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _miniStat(String value, String label) {
+  Widget _summaryStat(String value, String label) {
     return Column(
       children: [
         Text(
@@ -141,15 +134,15 @@ class HistoryScreen extends StatelessWidget {
           style: const TextStyle(
             color: Colors.white,
             fontSize: 15,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w700,
           ),
         ),
         const SizedBox(height: 2),
         Text(
           label,
           style: TextStyle(
-            color: Colors.white.withAlpha(160),
-            fontSize: 10,
+            color: Colors.white.withAlpha(170),
+            fontSize: 11,
           ),
         ),
       ],
@@ -207,7 +200,7 @@ class HistoryScreen extends StatelessWidget {
             ),
           ),
           Text(
-            '\u00d7${session.count}',
+            '×${session.count}',
             style: const TextStyle(
               color: AppColors.deepOrange,
               fontSize: 16,
@@ -229,6 +222,23 @@ class HistoryScreen extends StatelessWidget {
       return '${(n / 1000).toStringAsFixed(n % 1000 == 0 ? 0 : 1)}k';
     }
     return n.toString();
+  }
+
+  String _lastPracticedLabel(DateTime? lastPracticed) {
+    if (lastPracticed == null) return 'Never';
+
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final practiceDay = DateTime(
+      lastPracticed.year,
+      lastPracticed.month,
+      lastPracticed.day,
+    );
+    final difference = today.difference(practiceDay).inDays;
+
+    if (difference == 0) return 'Today';
+    if (difference == 1) return 'Yesterday';
+    return '${difference}d ago';
   }
 
   List<_DateGroup> _groupByDate(List<JapaSession> sessions) {

@@ -47,6 +47,20 @@ class StorageService {
     return (totalSeconds / 60).round();
   }
 
+  static int totalMinutesForPrayer(String prayerId) {
+    final totalSeconds = getAllSessions()
+        .where((s) => s.prayerId == prayerId)
+        .fold(0, (sum, s) => sum + s.durationSeconds);
+    return (totalSeconds / 60).round();
+  }
+
+  static DateTime? lastPracticedForPrayer(String prayerId) {
+    final matchingSessions =
+        getAllSessions().where((s) => s.prayerId == prayerId).toList();
+    if (matchingSessions.isEmpty) return null;
+    return matchingSessions.first.completedAt;
+  }
+
   static int currentStreak() {
     final sessions = getAllSessions();
     if (sessions.isEmpty) return 0;
@@ -79,21 +93,6 @@ class StorageService {
     return streak;
   }
 
-
-  static int totalMinutesForPrayer(String prayerId) {
-    final totalSeconds = getAllSessions()
-        .where((s) => s.prayerId == prayerId)
-        .fold(0, (sum, s) => sum + s.durationSeconds);
-    return (totalSeconds / 60).round();
-  }
-
-  static DateTime? lastPracticedForPrayer(String prayerId) {
-    final sessions = getAllSessions()
-        .where((s) => s.prayerId == prayerId)
-        .toList();
-    if (sessions.isEmpty) return null;
-    return sessions.first.completedAt;
-  }
   // --- Preferences ---
 
   static int? getLastCount(String prayerId) {

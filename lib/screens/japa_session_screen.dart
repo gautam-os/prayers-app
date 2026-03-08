@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import '../models/prayer.dart';
 import '../models/japa_session.dart';
 import '../services/haptic_service.dart';
@@ -34,6 +35,7 @@ class _JapaSessionScreenState extends State<JapaSessionScreen> {
     super.initState();
     _showEnglish = widget.showEnglish;
     _stopwatch = Stopwatch()..start();
+    WakelockPlus.enable();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (mounted) setState(() {});
     });
@@ -43,6 +45,7 @@ class _JapaSessionScreenState extends State<JapaSessionScreen> {
   void dispose() {
     _timer.cancel();
     _stopwatch.stop();
+    WakelockPlus.disable();
     super.dispose();
   }
 
@@ -79,6 +82,32 @@ class _JapaSessionScreenState extends State<JapaSessionScreen> {
     );
   }
 
+  Future<void> _confirmFinish() async {
+    final shouldFinish = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Finish session?'),
+        content: Text(
+          'You have counted $_count of ${widget.targetCount}.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Keep going'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Finish'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldFinish == true && mounted) {
+      _completeSession();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final text =
@@ -94,7 +123,9 @@ class _JapaSessionScreenState extends State<JapaSessionScreen> {
       body: GestureDetector(
         onTap: _increment,
         onLongPress: () {
-          if (_count > 0) _completeSession();
+          if (_count > 0) {
+            _confirmFinish();
+          }
         },
         child: Container(
           width: double.infinity,
@@ -113,34 +144,44 @@ class _JapaSessionScreenState extends State<JapaSessionScreen> {
                     ),
                   ),
                 const Spacer(),
-                Text(
-                  widget.prayer.title,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: screenHeight * 0.035,
-                    fontWeight: FontWeight.bold,
+                Semantics(
+                  header: true,
+                  label: widget.prayer.title,
+                  child: Text(
+                    widget.prayer.title,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: screenHeight * 0.035,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 24),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Text(
-                    text,
-                    style: TextStyle(
-                      color: Colors.white.withAlpha(230),
-                      fontSize: prayerFontSize,
-                      height: 1.8,
+                  child: Semantics(
+                    label: 'Prayer text',
+                    child: Text(
+                      text,
+                      style: TextStyle(
+                        color: Colors.white.withAlpha(230),
+                        fontSize: prayerFontSize,
+                        height: 1.8,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
                   ),
                 ),
                 const Spacer(),
-                Text(
-                  '$_count / ${widget.targetCount}',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: screenHeight * 0.06,
-                    fontWeight: FontWeight.bold,
+                Semantics(
+                  label: 'Count $_count of ${widget.targetCount}',
+                  child: Text(
+                    '$_count / ${widget.targetCount}',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: screenHeight * 0.06,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 8),

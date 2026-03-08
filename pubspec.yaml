@@ -1,5 +1,5 @@
 name: prayers_app
-description: "A new Flutter project."
+description: "A personal prayer counter for three fixed prayers."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -35,6 +35,7 @@ dependencies:
   hive_flutter: ^1.1.0
   intl: ^0.19.0
   vibration: ^2.0.0
+  wakelock_plus: ^1.4.0
 
 dev_dependencies:
   flutter_test:
