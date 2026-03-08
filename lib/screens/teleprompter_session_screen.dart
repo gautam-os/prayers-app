@@ -125,6 +125,7 @@ class _TeleprompterSessionScreenState extends State<TeleprompterSessionScreen>
     final verseFontSize = screenHeight * 0.028;
 
     return Scaffold(
+      backgroundColor: AppColors.deepOrange,
       body: GestureDetector(
         onTap: _advanceVerse,
         onHorizontalDragEnd: (details) {
@@ -140,6 +141,8 @@ class _TeleprompterSessionScreenState extends State<TeleprompterSessionScreen>
           if (_count > 0) _completeSession();
         },
         child: Container(
+          width: double.infinity,
+          height: double.infinity,
           decoration: const BoxDecoration(gradient: AppColors.gradient),
           child: SafeArea(
             child: Column(

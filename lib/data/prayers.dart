@@ -1,8 +1,6 @@
 import '../models/prayer.dart';
 
-const _marutiOriginal = '''॥ मारुती नमस्कार ॥
-
-महारुद्र अवतार हा सूर्यवंशी ।
+const _marutiOriginal = '''महारुद्र अवतार हा सूर्यवंशी ।
 अनादिनाथ पूर्ण तारकासी ।
 असा चैत्र पौर्णिमेचा जन्म झाला ।
 नमस्कार माझा त्या मारुतीला ॥
@@ -32,9 +30,7 @@ const _marutiOriginal = '''॥ मारुती नमस्कार ॥
 नमूं जायवालागीं रे मोक्षपंथा ।
 नमस्कार माझा त्या हनुमंता ॥''';
 
-const _marutiEnglish = '''|| Maruti Namaskar ||
-
-Maharudra avatar ha suryavamshi
+const _marutiEnglish = '''Maharudra avatar ha suryavamshi
 Anadinath purna tarakasi
 Asa Chaitra paurnimecha janma jhala
 Namaskar majha tya Marutila

@@ -90,12 +90,15 @@ class _JapaSessionScreenState extends State<JapaSessionScreen> {
     final prayerFontSize = (screenHeight * 0.03).clamp(20.0, 30.0);
 
     return Scaffold(
+      backgroundColor: AppColors.deepOrange,
       body: GestureDetector(
         onTap: _increment,
         onLongPress: () {
           if (_count > 0) _completeSession();
         },
         child: Container(
+          width: double.infinity,
+          height: double.infinity,
           decoration: const BoxDecoration(gradient: AppColors.gradient),
           child: SafeArea(
             child: Column(

@@ -34,7 +34,10 @@ class _CountPickerScreenState extends State<CountPickerScreen> {
         _showEnglish ? widget.prayer.englishText : widget.prayer.originalText;
 
     return Scaffold(
+      backgroundColor: AppColors.deepOrange,
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: const BoxDecoration(gradient: AppColors.gradient),
         child: SafeArea(
           child: Column(
@@ -44,10 +47,16 @@ class _CountPickerScreenState extends State<CountPickerScreen> {
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 child: Row(
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back_rounded,
-                          color: Colors.white),
-                      onPressed: () => Navigator.pop(context),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withAlpha(25),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back_rounded,
+                            color: Colors.white),
+                        onPressed: () => Navigator.pop(context),
+                      ),
                     ),
                     const Spacer(),
                   ],
@@ -92,19 +101,27 @@ class _CountPickerScreenState extends State<CountPickerScreen> {
                       const SizedBox(height: 16),
                       _countPicker(),
                       const SizedBox(height: 12),
-                      TextButton(
-                        onPressed: _showCustomCountDialog,
-                        child: Text(
-                          '+ Custom Count',
-                          style: TextStyle(
-                            color: Colors.white.withAlpha(200),
-                            fontSize: 14,
-                            decoration: TextDecoration.underline,
-                            decorationColor: Colors.white.withAlpha(200),
+                      GestureDetector(
+                        onTap: _showCustomCountDialog,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: Colors.white.withAlpha(100), width: 1),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            '+ Custom',
+                            style: TextStyle(
+                              color: Colors.white.withAlpha(220),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 24),
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -112,10 +129,17 @@ class _CountPickerScreenState extends State<CountPickerScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
                             foregroundColor: AppColors.deepOrange,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            padding: const EdgeInsets.symmetric(vertical: 18),
+                            elevation: 4,
+                            shadowColor: Colors.black.withAlpha(50),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
                           ),
                           child: const Text('Start Prayer',
-                              style: TextStyle(fontSize: 18)),
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.5)),
                         ),
                       ),
                       const SizedBox(height: 24),
@@ -177,22 +201,36 @@ class _CountPickerScreenState extends State<CountPickerScreen> {
         final isSelected = count == _selectedCount;
         return GestureDetector(
           onTap: () => setState(() => _selectedCount = count),
-          child: Container(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
             margin: const EdgeInsets.symmetric(horizontal: 8),
-            width: 72,
-            height: 72,
+            width: isSelected ? 76 : 68,
+            height: isSelected ? 76 : 68,
             decoration: BoxDecoration(
-              color: isSelected ? Colors.white : Colors.white.withAlpha(40),
-              borderRadius: BorderRadius.circular(16),
+              color: isSelected ? Colors.white : Colors.white.withAlpha(30),
+              borderRadius: BorderRadius.circular(isSelected ? 22 : 18),
+              border: Border.all(
+                color: isSelected ? Colors.white : Colors.white.withAlpha(80),
+                width: isSelected ? 2.5 : 1.5,
+              ),
+              boxShadow: isSelected
+                  ? [
+                      BoxShadow(
+                        color: Colors.black.withAlpha(40),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      )
+                    ]
+                  : [],
             ),
             child: Center(
               child: Text(
                 count.toString(),
                 style: TextStyle(
                   color: isSelected ? AppColors.deepOrange : Colors.white,
-                  fontSize: isSelected ? 28 : 22,
-                  fontWeight:
-                      isSelected ? FontWeight.bold : FontWeight.normal,
+                  fontSize: isSelected ? 26 : 20,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),

@@ -25,7 +25,10 @@ class SessionCompleteScreen extends StatelessWidget {
     final dateStr = '${months[date.month - 1]} ${date.day}, ${date.year}';
 
     return Scaffold(
+      backgroundColor: AppColors.deepOrange,
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: const BoxDecoration(gradient: AppColors.gradient),
         child: SafeArea(
           child: Center(
@@ -75,9 +78,17 @@ class SessionCompleteScreen extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: AppColors.deepOrange,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        padding: const EdgeInsets.symmetric(vertical: 18),
+                        elevation: 4,
+                        shadowColor: Colors.black.withAlpha(50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                       ),
-                      child: const Text('Done', style: TextStyle(fontSize: 18)),
+                      child: const Text('Done',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w700,
+                              letterSpacing: 0.5)),
                     ),
                   ),
                 ],
